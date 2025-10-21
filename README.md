@@ -1,5 +1,5 @@
 # EaglerXPreview
-### Server widget for EaglercraftX servers (original code by ayunami2000)
+### Server widget for EaglercraftX servers (original code by [ayunami2000](https://github.com/ayunami2000))
 
 ![Example](assets/widget.png)
 
