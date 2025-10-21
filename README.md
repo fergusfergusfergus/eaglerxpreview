@@ -18,12 +18,12 @@ But, if you want compile this for yourself, firstly get your widget.js and get y
 ## Configuration
 ```javascript
 window.eaglercraftXPreview = {
-	widget:document.getElementById("example"),
-	name:"Minecraft Server", // the name of your server, this will be displayed on your widget.
-	force:false, // whether to prioritise the server name over the query name.
-	addr:"wss://example.com", // the websocket address of your server
-	hideAddr:false, // whether to hide the address of the server on the widget
-	spritesheet:"example.png" // the link to your spritesheet used for showing icons on the widget
+	widget: document.getElementById("example"),
+	name: "Minecraft Server", // the name of your server, this will be displayed on your widget.
+	force: false, // whether to prioritise the server name over the query name.
+	addr: "wss://example.com", // the websocket address of your server
+	hideAddr: false, // whether to hide the address of the server on the widget
+	spritesheet: "example.png" // the link to your spritesheet used for showing icons on the widget
 };
 ```
 
