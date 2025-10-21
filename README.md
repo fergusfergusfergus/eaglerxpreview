@@ -4,7 +4,7 @@
 ![Example](assets/widget.png)
 
 ## Features
-- **Supports servers using EaglerXBungee, EaglerXVelocity, and EaglerXServer**
+- **Supports servers using EaglerXBungee, EaglerXVelocity, or EaglerXServer**
 - **Animated MOTDs are supported**
 - **Provides lots of server info (icon, query name, MOTD, player count, ping, and whether the server is cracked)**
 - **Written purely in javascript, with no frameworks or nonsense**
