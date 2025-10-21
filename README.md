@@ -1,6 +1,8 @@
 # EaglerXPreview
 ### Server widget for EaglercraftX servers (original code by ayunami2000)
 
+![Example](assets/widget.png)
+
 ## Features
 - **Supports servers using EaglerXBungee, EaglerXVelocity, and EaglerXServer**
 - **Animated MOTDs are supported**
