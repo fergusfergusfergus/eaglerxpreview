@@ -14,7 +14,7 @@ You can download a complete ready to go ZIP file containing the compiled `assets
 But, if you want compile this for yourself, firstly get your widget.js and get your sprites.png, then make a new file and make the contents of the file: (contents from widget.js)+(4 null bytes `00 00 00 00`)+(contents from sprites.png), then finally compress that file with the `deflate-raw` algorithm, The final, compressed file is your `assets.epk`.
 
 ## Configuration
-```
+```javascript
 window.eaglercraftXPreview = {
 	widget:document.getElementById("example"),
 	name:"Minecraft Server", // the name of your server, this will be displayed on your widget.
