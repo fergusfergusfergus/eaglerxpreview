@@ -1,5 +1,5 @@
 # EaglercraftXPreview
-### Server & Relay Widget for EaglercraftX (original code by [ayunami2000](https://github.com/ayunami2000))
+### EaglercraftX Server & Relay Widget (original code by [ayunami2000](https://github.com/ayunami2000))
 
 ![Server](img/server.png)
 ![Relay](img/relay.png)
