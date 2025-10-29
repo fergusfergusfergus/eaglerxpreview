@@ -400,6 +400,7 @@ function render() {
             tipcanvas.style.display = "none";
         }
     }
+	requestAnimationFrame(render)
 }
 
 var updatetip = function(lines) {
@@ -494,7 +495,7 @@ canvas.addEventListener("mouseout", function() {
 spritesheet.addEventListener("load", function() {
     spriteload = true;
 	dbg("Spritesheet loaded with size", width, "x", height);
-    setInterval(render, 16);
+    requestAnimationFrame(render);
 });
 spritesheet.src = config.spritesheet;
 
