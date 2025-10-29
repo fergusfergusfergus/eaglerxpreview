@@ -5,16 +5,16 @@
 ![Relay](img/relay.png)
 
 ## Features
-- **Supports servers using EaglerXBungee, EaglerXVelocity, or EaglerXServer**
+- **Supports EaglercraftX servers and relays**
 - **Animated MOTDs are supported**
 - **Provides lots of server info (icon, query name, MOTD, player count, ping, and whether the server is cracked)**
-- **Written purely in javascript, with no frameworks or nonsense**
+- **Written purely in javascript, with no extra frameworks or nonsense**
 - **Lightweight and fast (~15KB)**
 
 ## Downloads
-You can download a complete ready to go ZIP file containing the compiled `assets.bin` and a HTML file showing a example of it working from the [Releases](https://github.com/wassuuuu/eaglerxpreview/releases) tab.
+You can download a complete ready to go ZIP file containing the compiled `assets.bin` and a HTML file showing a example of it working from the [Releases](https://github.com/fergusfergusfergus/eaglerxpreview/releases) tab.
 
-But, if you want compile this for yourself, firstly get your widget.js and get your sprites.png, then make a new file and make the contents of the file: (contents from widget.js)+(4 null bytes `00 00 00 00`)+(contents from sprites.png), then finally compress that file with the `deflate-raw` algorithm, The final, compressed file is your `assets.bin`.
+However, if you want compile this for yourself, firstly get your widget.js and get your sprites.png, then make a new file and make the contents of the file: (contents from widget.js)+(4 null bytes `00 00 00 00`)+(contents from sprites.png), then finally compress that file with the `deflate-raw` algorithm, The final, compressed file is your `assets.bin`.
 
 ## Configuration
 ```javascript
