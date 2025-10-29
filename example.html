@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+   <body style="background-color:black;padding:0;margin:0;width:100vw;height:100vh;text-align:center;display:block">
+      <a style="display:inline-block;line-height:100vh;width:100vmin;height:100%;cursor:default" href="https://example.com"></a>
+      <script>
+		if(window.location.href.indexOf("file:") === 0) {
+			alert("You can't open the file locally, instead run a HTTP server locally.");
+		}
+		(async()=>{
+			bytes=new Uint8Array(await new Response(new Blob([new Uint8Array(await fetch("assets.bin").then(r=>r.arrayBuffer()))]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+			sep=[0,0,0,0];
+			i=bytes.findIndex((_,idx)=>idx<=bytes.length-sep.length&&sep.every((v,j)=>bytes[idx+j]===v));
+			window.eaglercraftXPreview = {
+				widget:document.querySelector("a"),
+				name:"Example Server",
+				force:true,
+				addr:"wss://sus.shhnowisnottheti.me",
+				hideAddr:false,
+				spritesheet:URL.createObjectURL(new Blob([bytes.slice(i+4)],{type:"image/png"}))
+			};
+			document.head.append(Object.assign(document.createElement("script"),{src:URL.createObjectURL(new Blob([new TextDecoder().decode(bytes.slice(0,i))],{type:"text/javascript"}))}));
+		})();
+      </script>
+   </body>
+</html>
