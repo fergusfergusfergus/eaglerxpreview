@@ -33,3 +33,6 @@ window.eaglercraftXPreview = {
 | Chromium  | 105+             |
 | Firefox   | 115+             |
 | Safari    | 16+              |
+
+## Network Flow
+![Diagram](assets/diagram.png)
