@@ -1,9 +1,35 @@
 var chars = [1, 9, 9, 8, 8, 8, 8, 7, 9, 8, 9, 9, 8, 9, 9, 9, 8, 8, 8, 8, 9, 9, 8, 9, 8, 8, 8, 8, 8, 9, 9, 9, 4, 2, 5, 6, 6, 6, 6, 3, 5, 5, 5, 6, 2, 6, 2, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 2, 2, 5, 6, 5, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 4, 6, 6, 3, 6, 6, 6, 6, 6, 5, 6, 6, 2, 6, 5, 3, 6, 6, 6, 6, 6, 6, 6, 4, 6, 6, 6, 6, 6, 6, 5, 2, 5, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 6, 3, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 2, 6, 6, 8, 9, 9, 6, 6, 6, 8, 8, 6, 8, 8, 8, 8, 8, 6, 6, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 9, 9, 9, 5, 9, 9, 8, 7, 7, 8, 7, 8, 8, 8, 7, 8, 8, 7, 9, 9, 6, 7, 7, 7, 7, 7, 9, 6, 7, 8, 7, 6, 6, 9, 7, 6, 7, 1];
 
 var config = window.eaglercraftXPreview;
+
+function dbg_g(...args) {
+    const rightnow = new Date();
+    const time = rightnow.toTimeString().split(" ")[0];
+    const miliseconds = rightnow.getMilliseconds().toString().padStart(3, "0");
+
+    return ["["+ time +"+"+ miliseconds +"] [EaglerXPreview]:", ...args];
+}
+
+function dbg(...args) {
+    console.log(...dbg_g(...args));
+}
+
+function dbg_w(...args) {
+    console.warn(...dbg_g(...args));
+}
+
+function dbg_e(...args) {
+    throw new Error(dbg_g(...args).join(" "));
+}
+
+if (!config) {
+	dbg_e("You must supply window.eaglercraftXPreview")
+}
+
 var widget = config.widget;
 var width = widget.clientWidth;
-var height = Math.floor(width * 0.1484375);
+var ratio = config.type === "relay" ? 0.09375 : 0.1484375;
+var height = Math.floor(width * ratio);
 
 widget.style.width = width + "px";
 widget.style.height = height + "px";
@@ -26,10 +52,10 @@ var spriteload = false;
 var serv = {
     n: config.name,
     c: false,
-    pt: 0,
     p: -1,
     m1: "",
     m2: null,
+	skip: false,
     on: 0,
     mx: 0
 };
@@ -38,7 +64,6 @@ var ctime = 0;
 var icon1 = null;
 var iconctx = null;
 var tiptext = "";
-var tipenabled = false;
 var tipcanvas = document.createElement("canvas");
 tipcanvas.width = 64;
 tipcanvas.height = 64;
@@ -63,6 +88,9 @@ var scalex = function(t) {
     return t * width / 256;
 };
 var scaley = function(t) {
+    if (config.type === "relay") {
+        return t * height / 38 * (38 / 24);
+    }
     return t * height / 38;
 };
 
@@ -142,7 +170,7 @@ var strwidth = function(s, stylechar) {
     return totalwidth;
 };
 
-var drawstr = function(x, y, str, r, g, b, shadow, randomseed, stylechar) {
+var drawstr = function(x, y, str, r, g, b, shadow, prng, stylechar) {
     var origstylechar = stylechar;
 
     if (stylechar) {
@@ -159,7 +187,7 @@ var drawstr = function(x, y, str, r, g, b, shadow, randomseed, stylechar) {
         y++;
     }
 
-    randomseed = randomseed || 3492589035;
+    prng = prng || 3492589035;
 
     var cflag = false;
     var cr = r;
@@ -209,7 +237,7 @@ var drawstr = function(x, y, str, r, g, b, shadow, randomseed, stylechar) {
                 var at = 0;
                 var newrandchar;
                 do {
-                    var nr = randomseed += 1831565813;
+                    var nr = prng += 1831565813;
                     nr = Math.imul(nr ^ nr >>> 15, 1 | nr);
                     nr ^= nr + Math.imul(nr ^ nr >>> 7, 61 | nr);
                     nr = ((nr ^ nr >>> 14) >>> 0) / 429496 & 255;
@@ -251,23 +279,18 @@ var drawstr = function(x, y, str, r, g, b, shadow, randomseed, stylechar) {
     }
 
     if (shadow) {
-        drawstr(origx, origy, str, r, g, b, false, randomseed, origstylechar);
+        drawstr(origx, origy, str, r, g, b, false, prng, origstylechar);
     }
 };
 
 function render() {
+	var x = 38;
+	if (config.type === "relay") {
+		x = 25;
+	}
     if (redraw || (hover && 0 === ++dtimer % 2) || width !== widget.clientWidth) {
         redraw = false;
-
-        if (width !== widget.clientWidth) {
-            height = Math.floor(widget.clientWidth * 0.1484375);
-            widget.style.height = height + "px";
-            width = widget.clientWidth;
-            height = widget.clientHeight;
-            canvas.width = width;
-            canvas.height = height;
-        }
-
+		
         var tiplines = [];
         ctx.imageSmoothingEnabled = false;
         ctx.clearRect(0, 0, width, height);
@@ -276,50 +299,67 @@ function render() {
         ctx.strokeStyle = "#808080";
         ctx.lineWidth = scalex(0.8);
         ctx.strokeRect(ctx.lineWidth / 2, ctx.lineWidth / 2, width - ctx.lineWidth, height - ctx.lineWidth);
-
-        if (icon1) {
-            ctx.drawImage(icon1, 0, 0, 64, 64, scalex(2), scaley(2), scalex(34), scaley(34));
-        } else {
-            drawimg(128, 0, 64, 64, 2, 2, 34, 34);
-        }
+		
+		if (config.type === "server") {
+			if (icon1) {
+				ctx.drawImage(icon1, 0, 0, 64, 64, scalex(2), scaley(2), scalex(34), scaley(34));
+			} else {
+				drawimg(128, 0, 64, 64, 2, 2, 34, 34);
+			}
+		}
 
         var now = Date.now();
         var showaddr = false;
-        drawstr(38, 4, serv.n, 255, 255, 255, 0, now);
-
-        if (serv.p >= 0) {
+		if (config.type === "relay") {
+			drawstr(x, 4, serv.n, 255, 255, 255, 1, now);
+		} else {
+			drawstr(x, 4, serv.n, 255, 255, 255, 0, now);
+		}
+        if (config.type === "relay") {
+            if (!config.hideAddr) {
+                drawstr(x, 14, config.addr, 153, 153, 153, 1, now);
+            }
+        } else if (serv.p >= 0) {
             if (serv.m1.length > 0) {
-                drawstr(38, 15, serv.m1, 255, 255, 255, 0, now);
+                drawstr(x, 15, serv.m1, 255, 255, 255, 0, now);
             }
             if (serv.m2 !== null) {
-                drawstr(38, 27, serv.m2, 255, 255, 255, 0, now);
+                drawstr(x, 27, serv.m2, 255, 255, 255, 0, now);
             } else {
                 showaddr = true;
                 if (!config.hideAddr) {
-                    drawstr(38, 27, config.addr, 48, 48, 48, 0, now);
+                    drawstr(x, 27, config.addr, 48, 48, 48, 0, now);
                 }
             }
         } else {
             if (now - ctime < 5000) {
                 redraw = true;
-                drawstr(38, 15, "", 128, 128, 128, 0, now);
+                drawstr(x, 15, "", 128, 128, 128, 0, now);
             } else {
-                drawstr(38, 15, "", 96, 96, 96, 0, now);
+                drawstr(x, 15, "", 96, 96, 96, 0, now);
             }
             showaddr = true;
             if (!config.hideAddr) {
-                drawstr(38, 27, config.addr, 48, 48, 48, 0, now);
+                drawstr(x, 27, config.addr, 48, 48, 48, 0, now);
             }
         }
-
+		
+		var fetching = ["Pinging..."]
+		if (config.type === "relay") {
+			fetching[0] = "Polling...";
+		}
+		
         var hoverping = hover && mx >= 240 && mx <= 256 && my >= 1 && my <= 11;
         if (serv.p >= 0) {
             if (hoverping) {
                 tiplines = [serv.p + "ms"];
             }
-            var pcount = serv.on + "/" + serv.mx;
-            var pcx = 241 - strwidth(pcount);
-            drawstr(pcx, 3, pcount, 128, 128, 128, 0);
+			
+			var pcount = ""
+			if (!serv.skip) {
+				pcount = serv.on + "/" + serv.mx;
+			}
+            drawstr(241 - strwidth(pcount), 3, pcount, 128, 128, 128, 0);
 
             var pingy = 80;
             if (serv.p < 150) {
@@ -337,7 +377,7 @@ function render() {
         } else if (now - ctime < 5000) {
             redraw = true;
             if (hoverping) {
-                tiplines = ["Pinging..."];
+                tiplines = fetching;
             }
             drawimg(138, 80 + 8 * Math.abs(Math.floor(now / 100) % 8 - 4), 10, 7, 243, 3);
         } else {
@@ -355,9 +395,7 @@ function render() {
         }
 
         if (tiplines && hover && tiplines.length !== 0) {
-            if (tipenabled) {
-                updatetip(tiplines);
-            }
+            updatetip(tiplines);
         } else {
             tipcanvas.style.display = "none";
         }
@@ -455,26 +493,18 @@ canvas.addEventListener("mouseout", function() {
 
 spritesheet.addEventListener("load", function() {
     spriteload = true;
+	dbg("Spritesheet loaded with size", width, "x", height);
     setInterval(render, 16);
 });
 spritesheet.src = config.spritesheet;
 
-var servaddr = config.addr;
-if (servaddr.indexOf("ws://") !== 0 && servaddr.indexOf("wss://") !== 0) {
-    if (location.href.indexOf("https:") === 0) {
-        servaddr = "wss://" + servaddr;
-    } else {
-        servaddr = "ws://" + servaddr;
-    }
-}
-
 serv = {
     n: config.name,
     c: false,
-    pt: Date.now(),
     p: -1,
     m1: "",
     m2: null,
+	skip: false,
     on: 0,
     mx: 0
 };
@@ -482,26 +512,40 @@ serv = {
 redraw = true;
 ctime = Date.now();
 
-var ws = new WebSocket(servaddr);
+dbg("Connecting to " + config.addr)
+var ws = new WebSocket(config.addr);
 ws.binaryType = "arraybuffer";
-
+	
 ws.onopen = function() {
-    ws.send("Accept: MOTD");
+	dbg("Connected to " + config.addr)
+	if (config.type === "server") {
+		ws.send("Accept: MOTD");
+		dbg('Sent "Accept: MOTD"')
+	} else if (config.type === "relay") {
+		ws.send(new Uint8Array([0x00, 0x03, 0x01, 0x00]));
+		dbg('Sent', new Uint8Array([0x00, 0x03, 0x01, 0x00]))
+	}
 };
 
 ws.onmessage = function(e) {
     if (e.data) {
-        if (typeof e.data === "string") {
+        if ((function(){try{JSON.parse(e.data);return true} catch {return}})() && config.type === "server") {
             try {
                 var d = JSON.parse(e.data);
+				dbg("Received server info", d)
                 if (d.type === "motd") {
                     redraw = true;
-                    if (serv.pt > 0) {
-                        serv.p = Date.now() - serv.pt;
-                        serv.pt = 0;
-                    }
+					dbg("Timestamp:", Math.floor(e.timeStamp) + "ms")
+					if (serv.p === -1) {
+						serv.p = Math.floor(e.timeStamp);
+					}
+					dbg("Server name:", d.name)
+					dbg("Server brand:", d.brand)
                     serv.n = config.force ? config.name : d.name;
-                    serv.c = d.cracked || false;
+                    serv.c = d.cracked;
+					if (serv.c) {
+						dbg_w("Server is cracked")
+					}
                     var m = d.data.motd;
                     if (m && m.length > 0) {
                         serv.m1 = m[0];
@@ -511,11 +555,29 @@ ws.onmessage = function(e) {
                     }
                     serv.on = d.data.online;
                     serv.mx = d.data.max;
-                }
+                } else if (d.type === "blocked") {
+					dbg_w("Server has blocked you temporarily, retrying in 5 seconds")
+					setTimeout(function() {
+						dbg_w("Server has blocked you temporarily, retrying in 4 seconds")
+						setTimeout(function() {
+							dbg_w("Server has blocked you temporarily, retrying in 3 seconds")
+							setTimeout(function() {
+								dbg_w("Server has blocked you temporarily, retrying in 2 seconds")
+								setTimeout(function() {
+									dbg_w("Server has blocked you temporarily, retrying in 1 seconds")
+									setTimeout(function() {
+										window.location.reload()
+									}, 1000)
+								}, 1000)
+							}, 1000)
+						}, 1000)
+					}, 1000)
+				}
             } catch (x) {
-                ws.close();
+				dbg_w("Malformed server info packet", JSON.parse(e.data))
             }
-        } else if ((d = new Uint8Array(e.data)).length === 16384) {
+        } else if ((d = new Uint8Array(e.data)).length === 16384 && config.type === "server") {
+			dbg("Received server icon", new Uint8Array(e.data))
             if (!icon1) {
                 icon1 = document.createElement("canvas");
                 icon1.width = 64;
@@ -528,13 +590,38 @@ ws.onmessage = function(e) {
             }
             iconctx.putImageData(imgdata, 0, 0);
             redraw = true;
-        }
+        } else if ((d = new Uint8Array(e.data))[0] === 0x69 && config.type === "relay") {
+			var d = new Uint8Array(e.data)
+			dbg("Received relay info", d)
+			dbg("Timestamp:", Math.floor(e.timeStamp) + "ms")
+			serv.skip = true
+            if (serv.p === -1) {
+                serv.p = Math.floor(e.timeStamp);
+            }
+			if (d[2] !== 0) {
+				var comment = new TextDecoder().decode(d.slice(3, 3 + d[2]));
+				serv.n = config.force ? config.name : comment;
+				dbg("Relay server comment:", comment)
+				dbg("Relay server brand:", new TextDecoder().decode(d.slice(3 + d[2] + 1, 3 + d[2] + 1 + d[3 + d[2]])))
+			} else {
+				dbg("No relay server comment")
+			}
+		} else {
+			ws.close();
+			var binary = new Uint8Array(e.data)
+			if (typeof e.data === "object" && binary.length !== 0) {
+				dbg_w("Received unknown packet", binary)
+			} else {
+				dbg_w("Received unknown packet", '"' + e.data + '"')
+			}
+		}
     }
 };
 
 ws.onclose = function() {
     ctime = 0;
     redraw = true;
+	dbg("Connection closed")
 };
 
 ws.onerror = function() {
@@ -542,5 +629,3 @@ ws.onerror = function() {
     ctime = 0;
     redraw = true;
 };
-
-tipenabled = true;
