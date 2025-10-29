@@ -30,8 +30,10 @@ window.eaglercraftXPreview = {
 ```
 
 ## Compatibility
-| Browser   | Supported Version |
-|-----------|:----------------:|
-| Chromium  | 105+             |
-| Firefox   | 115+             |
-| Safari    | 16+              |
+| Browser            | Supported Version |
+|--------------------|:-----------------:|
+| Chromium           | 105+              |
+| Firefox            | 115+              |
+| Safari             | 16+               |
+| Internet Explorer  | Not Supported     |
+
