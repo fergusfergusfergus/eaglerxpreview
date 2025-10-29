@@ -16,10 +16,12 @@
 				force:true,
 				addr:"wss://sus.shhnowisnottheti.me",
 				hideAddr:false,
-				spritesheet:URL.createObjectURL(new Blob([bytes.slice(i+4)],{type:"image/png"}))
+				spritesheet:URL.createObjectURL(new Blob([bytes.slice(i+4)],{type:"image/png"})),
+				type:"server"
 			};
 			document.head.append(Object.assign(document.createElement("script"),{src:URL.createObjectURL(new Blob([new TextDecoder().decode(bytes.slice(0,i))],{type:"text/javascript"}))}));
 		})();
       </script>
    </body>
+
 </html>
