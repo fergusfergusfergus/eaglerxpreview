@@ -24,6 +24,7 @@ window.eaglercraftXPreview = {
 	addr: "wss://example.com", // the websocket address of your server
 	hideAddr: false, // whether to hide the address of the server on the widget
 	spritesheet: "example.png" // the link to your spritesheet used for showing icons on the widget
+	type: "server" // "server", "relay"
 };
 ```
 
