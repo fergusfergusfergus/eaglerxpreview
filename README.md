@@ -1,13 +1,13 @@
 # EaglercraftXPreview
-### Server and Relay Widget for EaglercraftX (original code by [ayunami2000](https://github.com/ayunami2000))
+### Server & Relay Widget for EaglercraftX (original code by [ayunami2000](https://github.com/ayunami2000))
 
 ![Server](img/server.png)
 ![Relay](img/relay.png)
 
 ## Features
-- **Supports EaglercraftX servers and relays**
+- **Full support for EaglercraftX servers and relays**
 - **Animated MOTDs are supported**
-- **Provides lots of server info (icon, query name, MOTD, player count, ping, and whether the server is cracked)**
+- **Proper debugging and logging built in, and runs smoothly in browsers**
 - **Written purely in javascript, with no extra frameworks or nonsense**
 - **Lightweight and fast (~15KB)**
 
