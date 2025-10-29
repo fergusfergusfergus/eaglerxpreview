@@ -5,7 +5,7 @@
 ![Relay](img/relay.png)
 
 ## Features
-- **Full support for EaglercraftX servers and relays**
+- **Full support for EaglercraftX Servers and Network Relays**
 - **Animated MOTDs are supported**
 - **Proper debugging and logging built in, and runs smoothly in browsers**
 - **Written purely in javascript, with no extra frameworks or nonsense**
