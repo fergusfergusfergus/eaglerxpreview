@@ -1,7 +1,8 @@
 # EaglercraftXPreview
-### Server widget for EaglercraftX servers (original code by [ayunami2000](https://github.com/ayunami2000))
+### Server and Relay widget for EaglercraftX servers (original code by [ayunami2000](https://github.com/ayunami2000))
 
-![Example](assets/widget.png)
+![Server](img/server.png)
+![Relay](img/relay.png)
 
 ## Features
 - **Supports servers using EaglerXBungee, EaglerXVelocity, or EaglerXServer**
