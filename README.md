@@ -9,7 +9,7 @@
 - **Animated MOTDs are supported**
 - **Proper debugging and logging built in, and runs smoothly in browsers**
 - **Written purely in javascript, with no extra frameworks or nonsense**
-- **Lightweight and fast (~16KB)**
+- **Lightweight and fast (~15KB)**
 
 ## Downloads
 You can download a complete ready to go ZIP file containing the compiled `assets.bin` and a HTML file showing a example of it working from the [Releases](https://github.com/fergusfergusfergus/eaglerxpreview/releases) tab.
